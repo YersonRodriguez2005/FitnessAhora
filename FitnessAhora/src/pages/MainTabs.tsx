@@ -11,8 +11,8 @@ import {
 import Dashboard from './Dashboard';
 import Train from './Train';
 import RutinaSemanal from './RutinaSemanal';
-import Nutrition from './nutrition';
 import Profile from './Profile';
+import Nutrition from './Nutrition';
 
 const MainTabs: React.FC = () => {
   return (

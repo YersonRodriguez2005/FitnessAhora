@@ -3,46 +3,39 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
   IonToolbar,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonIcon,
   IonButtons,
   IonBackButton,
   IonSelect,
   IonSelectOption,
-  IonSpinner,
-  IonButton,
+  IonItem,
+  IonLabel,
+  IonIcon,
   IonModal,
   IonCheckbox,
+  IonSpinner,
+  IonSkeletonText,
   useIonToast,
   useIonAlert,
-  IonSkeletonText,
 } from "@ionic/react";
 import {
   repeatOutline,
   fitnessOutline,
   alertCircleOutline,
-  flameOutline,
   barbellOutline,
   calendarOutline,
   saveOutline,
   closeOutline,
   checkmarkCircleOutline,
-  chevronDownOutline, // <-- Nuevo
-  chevronUpOutline, // <-- Nuevo
+  chevronDownOutline,
+  chevronUpOutline,
+  flashOutline,
+  barbellOutline as dumbbellIcon,
 } from "ionicons/icons";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 import confetti from "canvas-confetti";
+import "../styles/RutinaSemanal.css";
 
 interface Ejercicio {
   id_ejercicio?: string;
@@ -56,60 +49,40 @@ interface Ejercicio {
 
 type RutinaSemanalData = Record<string, Ejercicio[]>;
 
-// Días de la semana disponibles para el sistema
-const DIAS_SEMANA = [
-  "lunes",
-  "martes",
-  "miercoles",
-  "jueves",
-  "viernes",
-  "sabado",
-  "domingo",
-];
+const DIAS_SEMANA = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"];
+const DIA_CORTO: Record<string, string> = {
+  lunes: "Lun", martes: "Mar", miercoles: "Mié",
+  jueves: "Jue", viernes: "Vie", sabado: "Sáb", domingo: "Dom",
+};
 
 const RutinaSemanal: React.FC = () => {
   const { user, setUser } = useAuth();
-
-  // Asumimos que el backend nos devuelve los días del usuario, o usamos un esquema de 4 días por defecto
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const diasGuardados = (user as any)?.dias_entrenamiento || [
-    "lunes",
-    "martes",
-    "jueves",
-    "viernes",
-  ];
+  const diasGuardados = (user as any)?.dias_entrenamiento || ["lunes", "martes", "jueves", "viernes"];
 
   const [diasUsuario, setDiasUsuario] = useState<string[]>(diasGuardados);
-  const [diaSeleccionado, setDiaSeleccionado] = useState<string>(
-    diasGuardados[0] || "lunes",
-  );
+  const [diaSeleccionado, setDiaSeleccionado] = useState<string>(diasGuardados[0] || "lunes");
   const [equipamiento, setEquipamiento] = useState<string>("Bandas");
   const [rutina, setRutina] = useState<RutinaSemanalData | null>(null);
-
-  // Estados de carga y modales
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFinishing, setIsFinishing] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [diasTemporales, setDiasTemporales] = useState<string[]>(diasGuardados);
+  const [ejercicioExpandidoId, setEjercicioExpandidoId] = useState<string | null>(null);
+
   const [presentToast] = useIonToast();
   const [presentAlert] = useIonAlert();
 
-  // NUEVO ESTADO: Guarda el ID (o index) del ejercicio que está expandido
-  const [ejercicioExpandidoId, setEjercicioExpandidoId] = useState<
-    string | null
-  >(null);
-
-  // Efecto principal para buscar la rutina
   useEffect(() => {
     const fetchRutina = async () => {
       setIsLoading(true);
+      setEjercicioExpandidoId(null);
       try {
         const params = new URLSearchParams({
           objetivo: user?.objetivo || "Aumento de Masa Muscular",
-          equipamiento: equipamiento,
+          equipamiento,
           dias: diasUsuario.join(","),
         });
-
         const response = await api.get(`/generar?${params.toString()}`);
         setRutina(response.data.rutina);
       } catch (error) {
@@ -118,500 +91,296 @@ const RutinaSemanal: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     fetchRutina();
   }, [equipamiento, user?.objetivo, diasUsuario]);
 
-  // Manejador para los checkboxes del Modal
   const toggleDia = (dia: string) => {
     if (diasTemporales.includes(dia)) {
       setDiasTemporales(diasTemporales.filter((d) => d !== dia));
     } else {
       const nuevosDias = [...diasTemporales, dia].sort(
-        (a, b) => DIAS_SEMANA.indexOf(a) - DIAS_SEMANA.indexOf(b),
+        (a, b) => DIAS_SEMANA.indexOf(a) - DIAS_SEMANA.indexOf(b)
       );
       setDiasTemporales(nuevosDias);
     }
   };
 
-  // Guardar los días personalizados en la Base de Datos
   const guardarDiasPersonalizados = async () => {
     if (diasTemporales.length === 0) {
-      presentToast({
-        message: "Selecciona al menos un día",
-        duration: 2000,
-        color: "warning",
-      });
+      presentToast({ message: "Selecciona al menos un día", duration: 2000, color: "warning" });
       return;
     }
-
     try {
       setDiasUsuario(diasTemporales);
       setDiaSeleccionado(diasTemporales[0]);
-
       const newUser = { ...user!, dias_entrenamiento: diasTemporales };
       setUser(newUser);
       localStorage.setItem("fitness_user", JSON.stringify(newUser));
-
       setShowModal(false);
-      presentToast({
-        message: "Días de entrenamiento actualizados",
-        duration: 2000,
-        color: "success",
-      });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      presentToast({
-        message: "Error al guardar los días",
-        duration: 2000,
-        color: "danger",
-      });
+      presentToast({ message: "Días actualizados ✅", duration: 2000, color: "success" });
+    } catch {
+      presentToast({ message: "Error al guardar los días", duration: 2000, color: "danger" });
     }
   };
 
-  // Función que intercepta el click de finalizar
   const confirmarFinalizacion = () => {
     presentAlert({
       header: "¿Terminar entrenamiento?",
-      message: "¿Estás seguro de registrar esta rutina como completada?",
+      message: "¿Estás listo para registrar esta sesión como completada?",
       buttons: [
-        {
-          text: "Seguir entrenando",
-          role: "cancel",
-          cssClass: "secondary",
-        },
-        {
-          text: "Sí, finalizar",
-          handler: () => {
-            finalizarEntrenamiento();
-          },
-        },
+        { text: "Seguir entrenando", role: "cancel" },
+        { text: "Sí, finalizar 🔥", handler: () => finalizarEntrenamiento() },
       ],
     });
   };
 
-  // Función de Gamificación y Registro
   const finalizarEntrenamiento = async () => {
     setIsFinishing(true);
     try {
-      await api.post("/registrar", {
-        id_usuario: user?.id,
-        dia_nombre: diaSeleccionado,
-      });
-
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#2dd36f", "#ffd534", "#3880ff"],
-      });
-
-      presentToast({
-        message: "¡Increíble! Entrenamiento de hoy completado. 🔥",
-        duration: 3000,
-        color: "success",
-        position: "middle",
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await api.post("/registrar", { id_usuario: user?.id, dia_nombre: diaSeleccionado });
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ["#2dd36f", "#ffd534", "#3880ff"] });
+      presentToast({ message: "¡Increíble! Sesión completada 🔥", duration: 3000, color: "success", position: "middle" });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      presentToast({
-        message: err.response?.data?.mensaje || "Error al guardar el progreso",
-        duration: 2000,
-        color: "warning",
-      });
+      presentToast({ message: err.response?.data?.mensaje || "Error al guardar", duration: 2000, color: "warning" });
     } finally {
       setIsFinishing(false);
     }
   };
 
-  // Función para abrir/cerrar tarjeta de ejercicio
   const toggleExpansion = (id: string) => {
-    if (ejercicioExpandidoId === id) {
-      setEjercicioExpandidoId(null);
-    } else {
-      setEjercicioExpandidoId(id);
-    }
+    setEjercicioExpandidoId(ejercicioExpandidoId === id ? null : id);
   };
 
   const ejerciciosDelDia = rutina ? rutina[diaSeleccionado] : [];
+  const totalSeries = ejerciciosDelDia?.reduce((acc, e) => acc + (e.series || 0), 0) || 0;
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
+      <IonHeader className="rutina-header" translucent>
+        <IonToolbar className="rutina-toolbar">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/app/train" />
+            <IonBackButton defaultHref="/app/train" className="rutina-back" />
           </IonButtons>
-          <IonTitle>Mi Plan Semanal</IonTitle>
+          <div className="rutina-toolbar-center">
+            <h1 className="rutina-toolbar-title">Plan Semanal</h1>
+            <p className="rutina-toolbar-sub">{user?.objetivo}</p>
+          </div>
           <IonButtons slot="end">
-            <IonButton onClick={() => setShowModal(true)}>
-              <IonIcon icon={calendarOutline} slot="icon-only" />
-            </IonButton>
+            <button className="rutina-cal-btn" onClick={() => setShowModal(true)}>
+              <IonIcon icon={calendarOutline} />
+            </button>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
-        <div style={{ textAlign: "center", marginBottom: "15px" }}>
-          <IonIcon
-            icon={flameOutline}
-            color="primary"
-            style={{ fontSize: "3rem" }}
-          />
-          <h2 style={{ margin: "5px 0" }}>Plan: {user?.objetivo}</h2>
+      <IonContent className="rutina-content" fullscreen>
+        <div className="rutina-wrapper">
+
+          {/* Equipment selector */}
+          <div className="equip-row">
+            <IonIcon icon={dumbbellIcon} className="equip-icon" />
+            <IonItem className="equip-select-item" lines="none">
+              <IonLabel className="equip-label">Equipamiento</IonLabel>
+              <IonSelect
+                value={equipamiento}
+                onIonChange={(e) => setEquipamiento(e.detail.value)}
+                interface="action-sheet"
+              >
+                <IonSelectOption value="Bandas">Bandas de Resistencia</IonSelectOption>
+                <IonSelectOption value="Pesas">Pesas / Gimnasio</IonSelectOption>
+                <IonSelectOption value="Corporal">Peso Corporal</IonSelectOption>
+              </IonSelect>
+            </IonItem>
+          </div>
+
+          {/* Day selector tabs */}
+          <div className="day-tabs">
+            {diasUsuario.map((dia) => (
+              <button
+                key={dia}
+                className={`day-tab ${diaSeleccionado === dia ? "day-tab-active" : ""}`}
+                onClick={() => setDiaSeleccionado(dia)}
+              >
+                {DIA_CORTO[dia] || dia.slice(0, 3)}
+              </button>
+            ))}
+          </div>
+
+          {/* Day summary bar */}
+          {!isLoading && ejerciciosDelDia && ejerciciosDelDia.length > 0 && (
+            <div className="day-summary">
+              <div className="day-summary-item">
+                <IonIcon icon={barbellOutline} />
+                <span><strong>{ejerciciosDelDia.length}</strong> ejercicios</span>
+              </div>
+              <div className="day-summary-divider" />
+              <div className="day-summary-item">
+                <IonIcon icon={repeatOutline} />
+                <span><strong>{totalSeries}</strong> series en total</span>
+              </div>
+              <div className="day-summary-divider" />
+              <div className="day-summary-item">
+                <IonIcon icon={flashOutline} />
+                <span><strong>~{Math.round(totalSeries * 2.5)} min</strong></span>
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
+          {isLoading ? (
+            <div className="rutina-skeleton-list">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="skeleton-card">
+                  <div className="skeleton-card-header">
+                    <IonSkeletonText animated style={{ width: "40px", height: "40px", borderRadius: "12px" }} />
+                    <div style={{ flex: 1 }}>
+                      <IonSkeletonText animated style={{ width: "30%", height: "10px", borderRadius: "4px", marginBottom: "6px" }} />
+                      <IonSkeletonText animated style={{ width: "60%", height: "14px", borderRadius: "4px" }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : ejerciciosDelDia?.length > 0 ? (
+            <>
+              <div className="rutina-exercise-list">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {ejerciciosDelDia.map((ejercicio: any, index: number) => {
+                  const idSeguro = ejercicio.id_ejercicio ? ejercicio.id_ejercicio : `${index + 1}`;
+                  const estaExpandido = ejercicioExpandidoId === idSeguro;
+
+                  return (
+                    <div
+                      key={idSeguro}
+                      className={`rutina-exercise-card ${estaExpandido ? "rutina-exercise-card-open" : ""}`}
+                    >
+                      <button
+                        className="rutina-card-trigger"
+                        onClick={() => toggleExpansion(idSeguro)}
+                      >
+                        <div className="rutina-card-index">{index + 1}</div>
+                        <div className="rutina-card-info">
+                          <p className="rutina-card-grupo">{ejercicio.grupo}</p>
+                          <h3 className="rutina-card-nombre">{ejercicio.nombre}</h3>
+                          <div className="rutina-card-volumen">
+                            <IonIcon icon={repeatOutline} />
+                            <span>{ejercicio.series} × {ejercicio.reps}</span>
+                          </div>
+                        </div>
+                        <IonIcon
+                          icon={estaExpandido ? chevronUpOutline : chevronDownOutline}
+                          className="rutina-chevron"
+                        />
+                      </button>
+
+                      {estaExpandido && (
+                        <div className="rutina-card-expanded">
+                          {/* Image */}
+                          <div className="rutina-img-container">
+                            <img
+                              src={`/assets/ejercicios/${ejercicio.imagen_url}`}
+                              alt={ejercicio.nombre}
+                              className="rutina-exercise-img"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = "/assets/ejercicios/placeholder.jpg";
+                              }}
+                            />
+                          </div>
+
+                          {/* Details */}
+                          <div className="rutina-detail-row">
+                            <div className="rutina-detail-item">
+                              <IonIcon icon={fitnessOutline} className="detail-icon detail-icon-teal" />
+                              <div>
+                                <p className="detail-label">Enfoque</p>
+                                <p className="detail-value">{ejercicio.grupo}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {(ejercicio.tip || ejercicio.consejos) && (
+                            <div className="rutina-tip-block">
+                              <IonIcon icon={alertCircleOutline} />
+                              <p><strong>Coach:</strong> {ejercicio.tip || ejercicio.consejos}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Finish button */}
+              <button
+                className="rutina-finish-btn"
+                onClick={confirmarFinalizacion}
+                disabled={isFinishing}
+              >
+                {isFinishing ? (
+                  <IonSpinner name="crescent" />
+                ) : (
+                  <>
+                    <IonIcon icon={checkmarkCircleOutline} />
+                    Finalizar entrenamiento de hoy
+                  </>
+                )}
+              </button>
+            </>
+          ) : (
+            <div className="rutina-empty">
+              <IonIcon icon={calendarOutline} />
+              <p>No hay rutina para este día</p>
+              <button className="rutina-empty-action" onClick={() => setShowModal(true)}>
+                Configurar días
+              </button>
+            </div>
+          )}
         </div>
 
-        <IonItem
-          lines="none"
-          style={{
-            marginBottom: "15px",
-            borderRadius: "10px",
-            background: "var(--ion-color-step-50)",
-          }}
-        >
-          <IonLabel color="medium">Equipamiento:</IonLabel>
-          <IonSelect
-            value={equipamiento}
-            onIonChange={(e) => setEquipamiento(e.detail.value)}
-            interface="action-sheet"
-          >
-            <IonSelectOption value="Bandas">
-              Bandas de Resistencia
-            </IonSelectOption>
-            <IonSelectOption value="Pesas">Pesas / Gimnasio</IonSelectOption>
-            <IonSelectOption value="Corporal">Peso Corporal</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-
-        <IonSegment
-          value={diaSeleccionado}
-          onIonChange={(e) => setDiaSeleccionado(e.detail.value as string)}
-          style={{ marginBottom: "20px", overflowX: "auto" }}
-          scrollable={true}
-        >
-          {diasUsuario.map((dia) => (
-            <IonSegmentButton key={dia} value={dia}>
-              <IonLabel style={{ textTransform: "capitalize" }}>
-                {dia.slice(0, 3)}
-              </IonLabel>
-            </IonSegmentButton>
-          ))}
-        </IonSegment>
-
-        {isLoading ? (
-          <>
-            {[1, 2, 3].map((esqueleto) => (
-              <IonCard
-                key={esqueleto}
-                style={{
-                  marginBottom: "15px",
-                  boxShadow: "none",
-                  border: "1px solid var(--ion-color-step-100)",
-                }}
-              >
-                <IonCardHeader>
-                  <IonCardTitle
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <IonSkeletonText
-                      animated={true}
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        borderRadius: "50%",
-                      }}
-                    />
-                    <IonSkeletonText
-                      animated={true}
-                      style={{
-                        width: "50%",
-                        height: "20px",
-                        borderRadius: "4px",
-                      }}
-                    />
-                  </IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonList
-                    lines="none"
-                    style={{ background: "transparent", padding: 0 }}
-                  >
-                    {[1, 2, 3].map((item) => (
-                      <IonItem
-                        key={item}
-                        style={{
-                          "--padding-start": "0",
-                          "--min-height": "30px",
-                        }}
-                      >
-                        <IonSkeletonText
-                          animated={true}
-                          style={{
-                            width: "20px",
-                            height: "20px",
-                            borderRadius: "50%",
-                            marginRight: "10px",
-                          }}
-                          slot="start"
-                        />
-                        <IonLabel>
-                          <IonSkeletonText
-                            animated={true}
-                            style={{
-                              width: item === 3 ? "90%" : "70%",
-                              height: "14px",
-                              borderRadius: "4px",
-                            }}
-                          />
-                        </IonLabel>
-                      </IonItem>
-                    ))}
-                  </IonList>
-                </IonCardContent>
-              </IonCard>
-            ))}
-          </>
-        ) : ejerciciosDelDia?.length > 0 ? (
-          <>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {ejerciciosDelDia.map((ejercicio: any, index: number) => {
-              // 🔥 EL TRUCO: Si el backend no envía el ID, usamos el índice de la lista (+1) para que nunca sea "undefined"
-              const idSeguro = ejercicio.id_ejercicio
-                ? ejercicio.id_ejercicio
-                : index + 1;
-
-              const estaExpandido =
-                ejercicioExpandidoId === idSeguro.toString();
-
-              return (
-                <IonCard
-                  key={idSeguro}
-                  style={{ marginBottom: "15px", cursor: "pointer" }}
-                  onClick={() => toggleExpansion(idSeguro.toString())}
-                >
-                  <IonCardHeader>
-                    {/* ... (Todo tu código del IonCardTitle y la parte siempre visible se mantiene igual) ... */}
-                    <IonCardTitle
-                      style={{
-                        fontSize: "1.2rem",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "8px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        <IonIcon icon={barbellOutline} color="primary" />
-                        {ejercicio.nombre}
-                      </div>
-                      <IonIcon
-                        icon={
-                          estaExpandido ? chevronUpOutline : chevronDownOutline
-                        }
-                        color="medium"
-                        style={{ transition: "0.3s transform" }}
-                      />
-                    </IonCardTitle>
-                  </IonCardHeader>
-
-                  <IonCardContent>
-                    {/* ZONA SIEMPRE VISIBLE */}
-                    <IonList
-                      lines="none"
-                      style={{ background: "transparent", padding: 0 }}
-                    >
-                      <IonItem
-                        style={{
-                          "--padding-start": "0",
-                          "--min-height": "30px",
-                        }}
-                      >
-                        <IonIcon
-                          icon={repeatOutline}
-                          slot="start"
-                          color="medium"
-                        />
-                        <IonLabel>
-                          <p>
-                            <strong>Volumen:</strong> {ejercicio.series} series
-                            de {ejercicio.reps}
-                          </p>
-                        </IonLabel>
-                      </IonItem>
-                    </IonList>
-
-                    {/* ZONA EXPANDIBLE */}
-                    {estaExpandido && (
-                      <div
-                        style={{
-                          marginTop: "15px",
-                          borderTop: "1px solid var(--ion-color-step-100)",
-                          paddingTop: "15px",
-                        }}
-                      >
-                        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "15px", backgroundColor: "var(--ion-color-step-50)", borderRadius: "12px", padding: "15px" }}>
-                          
-                          {/* LEEMOS EL NOMBRE DEL ARCHIVO DESDE LA BASE DE DATOS */}
-                          <img
-                            src={`/assets/ejercicios/${ejercicio.imagen_url}`}
-                            alt={ejercicio.nombre}
-                            style={{
-                              maxHeight: "220px",
-                              width: "auto",
-                              borderRadius: "8px",
-                              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                            }}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = "/assets/ejercicios/placeholder.jpg";
-                            }}
-                          />
-                          
-                          <p style={{ marginTop: "15px", fontSize: "0.9rem", color: "var(--ion-color-medium)", textAlign: "center", fontStyle: "italic" }}>
-                            Ilustración: {ejercicio.nombre}
-                          </p>
-                        </div>
-
-                        {/* DETALLES TÉCNICOS */}
-                        <IonList
-                          lines="none"
-                          style={{ background: "transparent", padding: 0 }}
-                        >
-                          <IonItem
-                            style={{
-                              "--padding-start": "0",
-                              "--min-height": "30px",
-                            }}
-                          >
-                            <IonIcon
-                              icon={fitnessOutline}
-                              slot="start"
-                              color="secondary"
-                            />
-                            <IonLabel className="ion-text-wrap">
-                              <p>
-                                <strong>Enfoque:</strong> {ejercicio.grupo}
-                              </p>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem
-                            style={{
-                              "--padding-start": "0",
-                              "--min-height": "30px",
-                              alignItems: "flex-start",
-                            }}
-                          >
-                            <IonIcon
-                              icon={alertCircleOutline}
-                              slot="start"
-                              color="warning"
-                              style={{ marginTop: "12px" }}
-                            />
-                            <IonLabel className="ion-text-wrap">
-                              <p style={{ marginTop: "10px" }}>
-                                <strong>Coach:</strong>{" "}
-                                {ejercicio.tip || ejercicio.consejos}
-                              </p>
-                            </IonLabel>
-                          </IonItem>
-                        </IonList>
-                      </div>
-                    )}
-                  </IonCardContent>
-                </IonCard>
-              );
-            })}
-
-            <IonButton
-              expand="block"
-              color="success"
-              style={{ marginTop: "30px", marginBottom: "50px" }}
-              onClick={confirmarFinalizacion}
-              disabled={isFinishing}
-            >
-              {isFinishing ? (
-                <IonSpinner name="crescent" style={{ marginRight: "10px" }} />
-              ) : (
-                <IonIcon icon={checkmarkCircleOutline} slot="start" />
-              )}
-              {isFinishing ? "Guardando..." : "Finalizar Entrenamiento de Hoy"}
-            </IonButton>
-          </>
-        ) : (
-          <div
-            className="ion-text-center"
-            style={{ color: "var(--ion-color-medium)", marginTop: "30px" }}
-          >
-            <IonIcon
-              icon={calendarOutline}
-              style={{ fontSize: "3rem", marginBottom: "10px" }}
-            />
-            <p>No hay rutina programada para este día.</p>
-            <IonButton fill="clear" onClick={() => setShowModal(true)}>
-              Configurar mis días
-            </IonButton>
-          </div>
-        )}
-
+        {/* Modal de días */}
         <IonModal
           isOpen={showModal}
           onDidDismiss={() => setShowModal(false)}
           initialBreakpoint={0.75}
           breakpoints={[0, 0.75, 1]}
+          className="rutina-modal"
         >
           <IonHeader>
-            <IonToolbar>
-              <IonTitle>Días de Entrenamiento</IonTitle>
-              <IonButtons slot="end">
-                <IonButton onClick={() => setShowModal(false)}>
+            <IonToolbar className="modal-toolbar">
+              <div className="modal-toolbar-inner">
+                <h2 className="modal-title">Días de entreno</h2>
+                <button className="modal-close-btn" onClick={() => setShowModal(false)}>
                   <IonIcon icon={closeOutline} />
-                </IonButton>
-              </IonButtons>
+                </button>
+              </div>
             </IonToolbar>
           </IonHeader>
-          <IonContent className="ion-padding">
-            <p
-              style={{
-                color: "var(--ion-color-medium)",
-                textAlign: "center",
-                marginBottom: "20px",
-              }}
-            >
-              Selecciona los días que tienes disponibles para entrenar.
-              Adaptaremos el volumen de tu rutina a tu disponibilidad.
+          <IonContent className="modal-content">
+            <p className="modal-description">
+              Adapta el volumen de tu plan según tu disponibilidad semanal.
             </p>
-            <IonList lines="full">
+            <div className="modal-days-list">
               {DIAS_SEMANA.map((dia) => (
-                <IonItem key={dia}>
-                  <IonLabel style={{ textTransform: "capitalize" }}>
-                    {dia}
-                  </IonLabel>
+                <div
+                  key={dia}
+                  className={`modal-day-row ${diasTemporales.includes(dia) ? "modal-day-active" : ""}`}
+                  onClick={() => toggleDia(dia)}
+                >
+                  <span className="modal-day-name">{dia.charAt(0).toUpperCase() + dia.slice(1)}</span>
                   <IonCheckbox
-                    slot="end"
                     checked={diasTemporales.includes(dia)}
                     onIonChange={() => toggleDia(dia)}
                   />
-                </IonItem>
+                </div>
               ))}
-            </IonList>
-            <IonButton
-              expand="block"
-              style={{ marginTop: "25px" }}
-              onClick={guardarDiasPersonalizados}
-            >
-              <IonIcon icon={saveOutline} slot="start" />
-              Guardar Calendario
-            </IonButton>
+            </div>
+            <button className="modal-save-btn" onClick={guardarDiasPersonalizados}>
+              <IonIcon icon={saveOutline} />
+              Guardar calendario
+            </button>
           </IonContent>
         </IonModal>
       </IonContent>

@@ -1,0 +1,295 @@
+/* ===== ONBOARDING.CSS ===== */
+
+.onboarding-content {
+  --background: #0f1117;
+}
+
+.onboarding-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 20px 50px;
+}
+
+/* ── Top bar ── */
+.onboarding-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  margin-bottom: 20px;
+}
+
+.onboarding-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.onboarding-skip-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 8px 4px;
+}
+
+/* ── Progress dots ── */
+.onboarding-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.onboarding-dot {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 0.2s ease;
+}
+
+.dot-active {
+  background: var(--ion-color-primary);
+}
+
+/* ── Step label ── */
+.onboarding-step-label {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-bottom: 24px;
+}
+
+.step-num {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.step-of {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+}
+
+/* ── Step container ── */
+.onboarding-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero ── */
+.onboarding-hero {
+  margin-bottom: 28px;
+}
+
+.onboarding-hero-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.onboarding-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.onboarding-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+/* ── Objetivo option cards ── */
+.option-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex: 1;
+}
+
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.option-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.option-card-text {
+  flex: 1;
+}
+
+.option-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.option-card-desc {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.option-check {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.option-check-visible {
+  opacity: 1;
+}
+
+/* ── Somatotipo cards ── */
+.soma-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex: 1;
+}
+
+.soma-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.soma-card-selected {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  border-color: rgba(var(--ion-color-primary-rgb), 0.4);
+}
+
+.soma-emoji {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  width: 42px;
+  text-align: center;
+}
+
+.soma-text {
+  flex: 1;
+}
+
+.soma-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 3px;
+}
+
+.soma-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.soma-check {
+  color: var(--ion-color-primary);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* ── Buttons ── */
+.onboarding-next-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 15px;
+  background: var(--ion-color-primary);
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+}
+
+.onboarding-next-btn ion-icon {
+  font-size: 1.1rem;
+}
+
+.onboarding-finish-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 15px;
+  background: linear-gradient(120deg, var(--ion-color-primary) 0%, #5e9bff 100%);
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+}
+
+.onboarding-finish-btn ion-icon {
+  font-size: 1.1rem;
+}
+
+.onboarding-finish-btn:disabled {
+  opacity: 0.6;
+}
