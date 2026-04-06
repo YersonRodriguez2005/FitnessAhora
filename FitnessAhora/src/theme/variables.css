@@ -1,0 +1,13 @@
+:root {
+  /* Forzar fondo oscuro */
+  --ion-background-color: #121212;
+  --ion-text-color: #ffffff;
+
+  /* Tu Verde Neón (Primary) */
+  --ion-color-primary: #00E676;
+  --ion-color-primary-rgb: 0,230,118;
+  --ion-color-primary-contrast: #000000;
+  --ion-color-primary-contrast-rgb: 0,0,0;
+  --ion-color-primary-shade: #00ca68;
+  --ion-color-primary-tint: #1ae984;
+}
