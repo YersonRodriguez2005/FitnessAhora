@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="/assets/logo.png" alt="FitnessAhora Logo" width="100" style="border-radius: 20px"/>
+<img src="./FitnessAhora/public/assets/logo.png" alt="FitnessAhora Logo" width="100" style="border-radius: 20px"/>
 
 # FitnessAhora 💪
 
