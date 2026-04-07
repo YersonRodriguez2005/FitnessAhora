@@ -19,22 +19,6 @@
 
 ---
 
-## 📋 Tabla de Contenidos
-
-- [Acerca del Proyecto](#acerca-del-proyecto)
-- [Características](#características)
-- [Stack Tecnológico](#stack-tecnológico)
-- [Demo](#demo)
-- [Arquitectura](#arquitectura)
-- [Instalación y Setup Local](#instalación-y-setup-local)
-- [Variables de Entorno](#variables-de-entorno)
-- [Documentación de la API](#documentación-de-la-api)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Contribuir](#contribuir)
-- [Licencia](#licencia)
-
----
-
 ## 🎯 Acerca del Proyecto
 
 **FitnessAhora** es una aplicación móvil de entrenamiento que genera rutinas y planes nutricionales personalizados según el **somatotipo** (ectomorfo, mesomorfo, endomorfo) y el **objetivo físico** del usuario (ganar masa muscular o perder grasa).
