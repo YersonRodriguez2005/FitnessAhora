@@ -13,7 +13,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-[Ver Demo](#demo) · [Reportar Bug](../../issues) · [Solicitar Feature](../../issues)
+[Ver Demo](FitnessAhora.apk)
 
 </div>
 
@@ -55,7 +55,6 @@ El usuario se registra, completa un onboarding de 2 pasos, y recibe de forma inm
 - 🥗 **Plan nutricional** con macros calculados (proteína, carbos, grasas) y menú diario
 - 👤 **Perfil** con edición de nombre, cambio de contraseña y estadísticas
 - 📊 **Estadísticas**: sesiones totales y racha semanal
-- 🎉 **Gamificación**: confeti al completar un entrenamiento
 - 🌙 **Diseño oscuro** moderno, consistente en todos los módulos
 
 ---
@@ -84,10 +83,6 @@ El usuario se registra, completa un onboarding de 2 pasos, y recibe de forma inm
 
 ---
 
-## 🎬 Demo
-
-> **App en producción:** [https://fitnessahora.app](https://fitnessahora.app) *(reemplaza con tu URL real)*
-
 ### Pantallas principales
 
 | Login | Dashboard | Plan Semanal |
@@ -97,8 +92,6 @@ El usuario se registra, completa un onboarding de 2 pasos, y recibe de forma inm
 | Catálogo | Nutrición | Perfil |
 |---|---|---|
 | ![Train](docs/screenshots/train.png) | ![Nutricion](docs/screenshots/nutrition.png) | ![Perfil](docs/screenshots/profile.png) |
-
-> 💡 Agrega tus capturas de pantalla en `/docs/screenshots/` y actualiza las rutas de imagen.
 
 ---
 
@@ -564,6 +557,6 @@ Distribuido bajo la licencia MIT. Ver [`LICENSE`](LICENSE) para más informació
 
 <div align="center">
 
-Hecho con ❤️ por el equipo de **FitnessAhora**
+Hecho con ❤️ por el desarrollador de software **Yerson Rodriguez**
 
 </div>
