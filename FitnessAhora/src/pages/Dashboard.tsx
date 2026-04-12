@@ -20,7 +20,7 @@ import {
 } from "ionicons/icons";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
-import "../styles/dashboard.css";
+import "../styles/Dashboard.css";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
