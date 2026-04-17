@@ -5,6 +5,8 @@ const ejerciciosRoutes = require('./routes/ejercicios_route');
 const RutinasRoutes = require('./routes/rutinas_route');
 const nutricionRoutes = require('./routes/nutricion_route');
 const progresoRoutes = require('./routes/progreso_route');
+const biometriaRoutes = require('./routes/biometria_route');
+const usuarioRoutes = require('./routes/usuario_route');
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use('/api', ejerciciosRoutes);
 app.use('/api', RutinasRoutes);
 app.use('/api', nutricionRoutes);
 app.use('/api', progresoRoutes);
+app.use('/api', biometriaRoutes);
+app.use('/api', usuarioRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

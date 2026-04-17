@@ -1,15 +1,18 @@
 const pool = require('../config/db');
 
 const generarRutinaSemanal = async (req, res) => {
-  // Ahora también recibimos "dias" desde la app móvil
   const { objetivo, equipamiento, dias } = req.query; 
 
-  // Convertimos el string "lunes,miercoles,viernes" en un array real
-  // Si no llega nada, usamos un esquema de 4 días por defecto
+  // 1. Convertimos los strings separados por comas en Arrays reales de JavaScript
   const diasArray = dias ? dias.split(',') : ['lunes', 'martes', 'jueves', 'viernes'];
+  const equipamientoArray = equipamiento ? equipamiento.split(',') : ['Bandas'];
+
+  // DEBUG: Esto se imprimirá en la consola de tu backend
+  console.log("=== NUEVA PETICIÓN DE RUTINA ===");
+  console.log("Equipamiento recibido (String):", equipamiento);
+  console.log("Equipamiento convertido (Array):", equipamientoArray);
 
   try {
-    // 1. Configuramos el volumen de entrenamiento según el objetivo
     let rangoReps = '10-12';
     let series = '4';
     let notaCoach = '';
@@ -23,16 +26,19 @@ const generarRutinaSemanal = async (req, res) => {
       notaCoach = 'Mantén descansos cortos (45s) entre series.';
     }
 
-    // 2. Buscamos ejercicios filtrando por el equipamiento
+    // 2. Usamos el Array nativo de JS con la sintaxis $1::text[] de Postgres
     const { rows: ejercicios } = await pool.query(
       `SELECT e.id_ejercicio, e.imagen_url, e.nombre, e.descripcion, e.consejos, g.nombre as grupo 
        FROM ejercicios e 
        JOIN grupos_musculares g ON e.id_grupo = g.id_grupo 
-       WHERE e.equipamiento = $1`,
-      [equipamiento]
+       WHERE e.equipamiento = ANY($1::text[])`,
+      [equipamientoArray] // Pasamos el array directamente
     );
 
+    console.log("Total de ejercicios encontrados:", ejercicios.length);
+
     if (ejercicios.length === 0) {
+      console.log("❌ Error: No se encontraron ejercicios en la BD.");
       return res.status(404).json({ mensaje: 'No hay ejercicios registrados para este equipamiento.' });
     }
 
@@ -74,4 +80,27 @@ const generarRutinaSemanal = async (req, res) => {
   }
 };
 
-module.exports = { generarRutinaSemanal };
+const obtenerEjerciciosDisponibles = async (req, res) => {
+  const { equipamiento } = req.query;
+
+  try {
+    const { rows: ejercicios } = await pool.query(
+      `SELECT e.id_ejercicio, e.imagen_url, e.nombre, e.descripcion, e.consejos, g.nombre as grupo 
+       FROM ejercicios e 
+       JOIN grupos_musculares g ON e.id_grupo = g.id_grupo 
+       WHERE e.equipamiento = ANY(string_to_array($1, ','))`,
+      [equipamiento]
+    );
+
+    if (ejercicios.length === 0) {
+      return res.status(404).json({ mensaje: 'No hay ejercicios registrados para este equipamiento.' });
+    }
+
+    res.status(200).json({ ejercicios });
+  } catch (error) {
+    console.error('Error al obtener ejercicios disponibles:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { generarRutinaSemanal, obtenerEjerciciosDisponibles };

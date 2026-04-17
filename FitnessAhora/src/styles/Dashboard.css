@@ -357,3 +357,319 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.6);
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   BIOMETRÍA — Adaptado al Dark Theme del Dashboard
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── Card de biometría ── */
+.bio-card {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  margin: 0 0 16px 0 !important;
+}
+
+/* ── Fila de métricas (peso / altura / IMC) ── */
+.bio-metrics-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.bio-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.bio-metric-icon {
+  font-size: 18px;
+  color: var(--ion-color-primary, #3880ff);
+  margin-bottom: 2px;
+}
+
+.bio-metric-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.bio-metric-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bio-imc-emoji {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.bio-metric-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  margin: 0 8px;
+}
+
+/* ── Chip de clasificación IMC ── */
+.bio-imc-chip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.bio-imc-chip-sub {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+/* ── Barra de progreso ── */
+.bio-progreso {
+  margin-bottom: 16px;
+}
+
+.bio-progreso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.bio-progreso-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bio-progreso-meta {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.bio-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bio-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.bio-progreso-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Gráfica ── */
+.grafica-container {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.grafica-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.grafica-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  text-align: center;
+}
+
+.grafica-empty ion-icon {
+  font-size: 32px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.grafica-tendencia {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.grafica-tendencia ion-icon {
+  font-size: 15px;
+}
+
+.grafica-tendencia-sub {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.grafica-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.grafica-footer-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.grafica-footer-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ── Botón registrar medición ── */
+.bio-registro-btn {
+  --background: var(--ion-color-primary, #3880ff);
+  --border-radius: 12px;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ── Modal: formulario de medición ── */
+.bio-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bio-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bio-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bio-input {
+  flex: 1;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  padding: 8px 0;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.bio-input::-webkit-outer-spin-button,
+.bio-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bio-stepper-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.bio-stepper-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Preview IMC en tiempo real ── */
+.bio-imc-preview {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bio-imc-preview-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bio-imc-preview-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ── Botón guardar medición ── */
+.bio-save-btn {
+  --background: var(--ion-color-primary, #3880ff);
+  --color: #ffffff;
+  --border-radius: 14px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-weight: 700;
+  font-size: 15px;
+}
